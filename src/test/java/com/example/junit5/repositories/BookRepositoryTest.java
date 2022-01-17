@@ -44,7 +44,6 @@ class BookRepositoryTest {
         Book book = new Book();
         book.setName("Head First Java");
         Book savedBook = bookRepository.save(book);
-
         assertEquals(book.getName(), savedBook.getName(), "Book was not saved");
 
     }
