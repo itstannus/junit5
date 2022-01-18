@@ -1,5 +1,6 @@
 package com.example.junit5.repositories;
 
+import com.example.junit5.AbstractContainerBaseTest;
 import com.example.junit5.entities.Book;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,31 +17,24 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-@Testcontainers
 @SpringBootTest
 @DisplayName("Book repository integration tests")
-class BookRepositoryTest {
+class BookRepositoryTest extends AbstractContainerBaseTest {
 
     @Autowired
     private BookRepository bookRepository;
 
-    @Container
-    private static final MySQLContainer container =new MySQLContainer("mysql:8.0.27")
-            .withUsername("test")
-            .withPassword("test")
-            .withDatabaseName("test");
-
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", container::getJdbcUrl);
-        registry.add("spring.datasource.username", container::getUsername);
-        registry.add("spring.datasource.password", container::getPassword);
+        registry.add("spring.datasource.url", AbstractContainerBaseTest.MY_SQL_CONTAINER::getJdbcUrl);
+        registry.add("spring.datasource.username", AbstractContainerBaseTest.MY_SQL_CONTAINER::getUsername);
+        registry.add("spring.datasource.password", AbstractContainerBaseTest.MY_SQL_CONTAINER::getPassword);
     }
 
     @Test
     @DisplayName("Save book in DB")
     void testSave() {
-        assumeTrue(container.isRunning());
+        assumeTrue(AbstractContainerBaseTest.MY_SQL_CONTAINER.isRunning());
         Book book = new Book();
         book.setName("Head First Java");
         Book savedBook = bookRepository.save(book);
