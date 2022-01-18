@@ -1,5 +1,7 @@
 package com.example.junit5;
 
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
 
 public abstract class AbstractContainerBaseTest {
@@ -12,6 +14,13 @@ public abstract class AbstractContainerBaseTest {
                 .withPassword("test")
                 .withDatabaseName("test");
         MY_SQL_CONTAINER.start();
+    }
+
+    @DynamicPropertySource
+    static void properties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", AbstractContainerBaseTest.MY_SQL_CONTAINER::getJdbcUrl);
+        registry.add("spring.datasource.username", AbstractContainerBaseTest.MY_SQL_CONTAINER::getUsername);
+        registry.add("spring.datasource.password", AbstractContainerBaseTest.MY_SQL_CONTAINER::getPassword);
     }
 }
 
